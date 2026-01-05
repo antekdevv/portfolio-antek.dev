@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="pl" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Opinie - Antek.dev</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        dark: {
+                            900: '#050505',
+                            800: '#0a0a0a',
+                            700: '#111111',
+                            600: '#1a1a1a',
+                        },
+                        accent: {
+                            blue: '#3b82f6',
+                            purple: '#8b5cf6',
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.8s ease-out forwards',
+                        'slide-up': 'slideUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { opacity: '0', transform: 'translateY(40px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        * {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        body {
+            background-color: #050505;
+            color: #e5e7eb;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .bg-animate {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at 50% 50%, #0a0a0a 0%, #050505 100%);
+        }
+
+        .glass {
+            background: rgba(10, 10, 10, 0.6);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #fff 0%, #9ca3af 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .accent-gradient {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+        }
+    </style>
+</head>
+<body class="selection:bg-blue-500/30">
+    <div class="bg-animate"></div>
+
+    <nav class="fixed top-0 w-full z-50 border-b border-white/5 glass">
+        <div class="max-w-6xl mx-auto px-6 h-16 flex justify-between items-center">
+            <a href="index.html" class="text-xl font-bold tracking-tighter">
+                AN<span class="text-blue-500">TEK</span>
+            </a>
+            <a href="index.html#reviews" class="text-sm font-medium text-gray-400 hover:text-white transition-colors">
+                ← Wróć
+            </a>
+        </div>
+    </nav>
+
+    <section class="min-h-screen pt-32 pb-20 px-6">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16 animate-fade-in">
+                <h1 class="text-5xl md:text-6xl font-extrabold tracking-tighter mb-6 text-gradient">Wszystkie opinie</h1>
+                <p class="text-gray-400 text-lg max-w-2xl mx-auto">Opinie od moich klientów na temat jakości mojej pracy</p>
+                <div class="mt-8 p-6 glass rounded-2xl border border-white/5 w-fit mx-auto">
+                    <p class="text-sm text-gray-400">
+                        <span id="reviews-count" class="text-2xl font-bold text-blue-400">0</span>
+                        <span class="text-gray-500"> opinii</span>
+                    </p>
+                </div>
+            </div>
+
+            <div id="all-reviews-container" class="grid gap-6 animate-slide-up">
+                <div class="col-span-full text-center py-16">
+                    <p class="text-gray-500 text-lg">Ładowanie opinii...</p>
+                </div>
+            </div>
+
+            <div class="mt-16 text-center">
+                <a href="index.html#reviews" class="inline-flex items-center gap-2 px-8 py-4 rounded-2xl accent-gradient text-white font-bold hover:shadow-[0_0_30px_rgba(59,130,246,0.3)] transition-all">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                    Dodaj swoją opinię
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-12 px-6 border-t border-white/5 mt-20">
+        <div class="max-w-6xl mx-auto text-center">
+            <p class="text-gray-500 text-sm">&copy; 2026 Antek. Wszystkie prawa zastrzeżone.</p>
+        </div>
+    </footer>
+
+    <script>
+        function displayAllReviews() {
+            const reviews = JSON.parse(localStorage.getItem('reviews')) || [];
+            const container = document.getElementById('all-reviews-container');
+            const countEl = document.getElementById('reviews-count');
+
+            countEl.textContent = reviews.length;
+
+            if (reviews.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full glass p-12 rounded-3xl border border-white/5 text-center">
+                        <svg class="w-16 h-16 mx-auto mb-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4v.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <p class="text-gray-500 text-lg mb-6">Brak opinii. Bądź pierwszy i dodaj swoją!</p>
+                        <a href="index.html#reviews" class="inline-flex items-center gap-2 px-8 py-3 rounded-2xl accent-gradient text-white font-bold hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] transition-all">
+                            Dodaj opinię
+                        </a>
+                    </div>
+                `;
+                return;
+            }
+
+            const reviewsByRating = {};
+            reviews.forEach(review => {
+                if (!reviewsByRating[review.stars]) {
+                    reviewsByRating[review.stars] = [];
+                }
+                reviewsByRating[review.stars].push(review);
+            });
+
+            let html = '';
+            
+            for (let stars = 5; stars >= 1; stars--) {
+                if (reviewsByRating[stars]) {
+                    const count = reviewsByRating[stars].length;
+                    const percentage = Math.round((count / reviews.length) * 100);
+                    
+                    html += `
+                        <div class="col-span-full space-y-4">
+                            <div class="flex items-center gap-4">
+                                <div class="flex gap-0.5">
+                                    ${'⭐'.repeat(stars)}
+                                    ${'☆'.repeat(5 - stars)}
+                                </div>
+                                <div class="flex-grow h-2 bg-white/5 rounded-full overflow-hidden">
+                                    <div class="h-full accent-gradient" style="width: ${percentage}%"></div>
+                                </div>
+                                <span class="text-sm text-gray-500 min-w-12 text-right">${count}</span>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            html += '<div class="col-span-full border-t border-white/5 pt-8 mt-8"></div>';
+
+            reviews.forEach((review, index) => {
+                const stars = '⭐'.repeat(review.stars);
+                html += `
+                    <div class="glass p-8 rounded-2xl border border-white/5 hover:border-blue-500/30 transition-all animate-slide-up" style="animation-delay: ${index * 0.05}s">
+                        <div class="flex items-start justify-between mb-4 flex-wrap gap-4">
+                            <div>
+                                <p class="font-bold text-white text-lg">${escapeHtml(review.name)}</p>
+                                <p class="text-xs text-gray-500">${review.date}</p>
+                            </div>
+                            <span class="text-2xl">${stars}</span>
+                        </div>
+                        <p class="text-gray-300 leading-relaxed">${escapeHtml(review.text).replace(/\n/g, '<br>')}</p>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            displayAllReviews();
+        });
+    </script>
+</body>
+</html>
